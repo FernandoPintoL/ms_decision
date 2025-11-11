@@ -154,10 +154,7 @@ events.out.tfevents.*
 checkpoint
 
 # Modelos entrenados (solo los generados, no los del repo)
-modelos_ml/*.h5
-modelos_ml/*.pkl
-modelos_ml/*.joblib
-modelos_ml/*.sav
+
 
 # Datos generados/temporales (NO ignoramos archivos_csv/ ni datos/ que son parte del proyecto)
 # Si tienes datasets muy grandes que no quieres versionar, agrégalos específicamente aquí
