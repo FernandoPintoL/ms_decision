@@ -179,5 +179,3 @@ tmp/
 # Archivos de sistema
 Thumbs.db
 .DS_Store
-datos/imagenes_entrenamiento
-datos/imagenes_raw
