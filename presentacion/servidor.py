@@ -11,6 +11,10 @@ from strawberry.fastapi import GraphQLRouter
 from contextlib import asynccontextmanager
 import sys
 import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -40,11 +44,8 @@ async def lifespan(app: FastAPI):
 
     print("\n[1/3] Conectando a MongoDB...")
     conexion = ConexionMongoDB()
-    db = conexion.conectar(
-        host="localhost",
-        puerto=27017,
-        nombre_bd="servicio_decision"
-    )
+    # Usar variables de entorno para la conexión
+    db = conexion.conectar()
     print("   # MongoDB conectado")
 
     print("\n[2/3] Cargando modelos ML...")
@@ -54,8 +55,13 @@ async def lifespan(app: FastAPI):
 
     print("\n[3/3] Servidor GraphQL listo")
     print("=" * 60)
-    print("API GraphQL disponible en: http://localhost:8002/graphql")
-    print("GraphiQL IDE disponible en: http://localhost:8002/graphql")
+
+    # Obtener puerto de variable de entorno
+    server_port = os.getenv('SERVER_PORT', '8002')
+    server_host = os.getenv('SERVER_HOST', '127.0.0.1')
+
+    print(f"API GraphQL disponible en: http://{server_host}:{server_port}/graphql")
+    print(f"GraphiQL IDE disponible en: http://{server_host}:{server_port}/graphql")
     print("=" * 60 + "\n")
 
     yield
@@ -146,10 +152,14 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
 
+    # Obtener configuración de variables de entorno
+    server_host = os.getenv('SERVER_HOST', '0.0.0.0')
+    server_port = int(os.getenv('SERVER_PORT', 8002))
+
     uvicorn.run(
         "presentacion.servidor:app",
-        host="0.0.0.0",
-        port=8002,
+        host=server_host,
+        port=server_port,
         reload=True,
         log_level="info"
     )

@@ -1,5 +1,5 @@
 # MongoDB
-pymongo==4.7.2
+pymongo[srv]==4.7.2
 
 # Machine Learning
 scikit-learn==1.5.2

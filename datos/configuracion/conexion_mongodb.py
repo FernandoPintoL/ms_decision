@@ -4,9 +4,14 @@ Capa: DATOS
 Responsabilidad: Establecer y gestionar conexión con base de datos MongoDB.
 """
 
+import os
 from typing import Optional
 from pymongo import MongoClient
 from pymongo.database import Database
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 
 class ConexionMongoDB:
@@ -24,25 +29,47 @@ class ConexionMongoDB:
 
     def conectar(
         self,
-        host: str = "localhost",
-        puerto: int = 27017,
-        nombre_bd: str = "servicio_decision"
+        host: str = None,
+        puerto: int = None,
+        nombre_bd: str = None,
+        uri: str = None
     ) -> Database:
         """
         Establece conexión con MongoDB.
 
         Args:
-            host: Host de MongoDB (default: localhost)
-            puerto: Puerto de MongoDB (default: 27017)
+            host: Host de MongoDB (default: localhost, desde variable de entorno)
+            puerto: Puerto de MongoDB (default: 27017, desde variable de entorno)
             nombre_bd: Nombre de la base de datos (default: servicio_decision)
+            uri: URI de conexión para MongoDB Atlas o conexión remota
 
         Returns:
             Database: Instancia de base de datos MongoDB
         """
         if self._cliente is None:
-            self._cliente = MongoClient(f"mongodb://{host}:{puerto}/")
+            # Obtener valores de variables de entorno si no se proporcionan
+            if uri is None:
+                uri = os.getenv('MONGODB_URI')
+
+            if nombre_bd is None:
+                nombre_bd = os.getenv('MONGODB_DB', 'servicio_decision')
+
+            if host is None:
+                host = os.getenv('MONGODB_HOST', 'localhost')
+
+            if puerto is None:
+                puerto = int(os.getenv('MONGODB_PORT', 27017))
+
+            # Si hay URI, usarla (MongoDB Atlas o similar)
+            if uri:
+                self._cliente = MongoClient(uri)
+                print(f">> Conectado a MongoDB Atlas/Remoto: {nombre_bd}")
+            else:
+                # Usar conexión local
+                self._cliente = MongoClient(f"mongodb://{host}:{puerto}/")
+                print(f">> Conectado a MongoDB local: {nombre_bd}")
+
             self._base_datos = self._cliente[nombre_bd]
-            print(f">> Conectado a MongoDB: {nombre_bd}")
 
         return self._base_datos
 
