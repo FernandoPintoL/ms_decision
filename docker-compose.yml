@@ -1,0 +1,97 @@
+# ============================================================================
+# docker-compose.yml - Desarrollo Local
+# ============================================================================
+# Servicios:
+#   - servicio-decision: MS Decisión (FastAPI + GraphQL + ML)
+#   - mongodb: Base de datos MongoDB
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ==========================================================================
+  # MongoDB - Base de Datos
+  # ==========================================================================
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb-decision
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: servicio_decision
+    ports:
+      - "27017:27017"
+    volumes:
+      # Persistencia de datos
+      - mongodb_data:/data/db
+      # Script de inicialización (opcional)
+      - ./datos/scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - ambulancias-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/servicio_decision --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ==========================================================================
+  # Microservicio Decisión
+  # ==========================================================================
+  servicio-decision:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ms-decision
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # MongoDB
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_DB: servicio_decision
+
+      # Servidor
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8000
+
+      # Python
+      PYTHONPATH: /app
+    volumes:
+      # Desarrollo: Hot reload (comentar en producción)
+      - ./presentacion:/app/presentacion
+      - ./negocio:/app/negocio
+      - ./datos:/app/datos
+
+      # Modelos ML (solo lectura)
+      - ./modelos_ml:/app/modelos_ml:ro
+
+      # CSVs (solo lectura)
+      - ./archivos_csv:/app/archivos_csv:ro
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - ambulancias-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# ==========================================================================
+# Volumes
+# ==========================================================================
+volumes:
+  mongodb_data:
+    name: mongodb_decision_data
+    driver: local
+
+# ==========================================================================
+# Networks
+# ==========================================================================
+networks:
+  ambulancias-network:
+    name: ambulancias-network
+    driver: bridge

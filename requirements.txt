@@ -1,0 +1,26 @@
+# MongoDB
+pymongo==4.7.2
+
+# Machine Learning
+scikit-learn==1.5.2
+pandas==2.2.3
+numpy==2.1.3
+joblib==1.4.2
+
+# Visualización
+matplotlib==3.9.2
+seaborn==0.13.2
+
+# API GraphQL
+strawberry-graphql[federation]==0.250.0
+fastapi==0.115.0
+uvicorn==0.30.0
+httpx==0.27.0
+
+# Deep Learning
+tensorflow==2.20.0
+Pillow==11.0.0
+tqdm==4.67.1
+
+# Utilidades
+python-dotenv==1.0.1

@@ -1,0 +1,54 @@
+# ============================================================================
+# .dockerignore - Archivos excluidos de la imagen Docker
+# ============================================================================
+# Excluye archivos innecesarios para reducir tamaño de imagen
+# ============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+notebooks/
+
+# Git
+.git/
+.gitignore
+
+# Documentación (no necesaria en runtime)
+
+GUIA*
+VERIFICACION*
+SOLUCION*
+
+# Datos no necesarios
+datos/imagenes_raw/
+datos/scripts/
+pruebas/
+probar_*.py
+verificar_*.py
+
+# Archivos temporales
+*.log
+.env.example
+iniciar_servidor.bat
+iniciar_servidor.py
+
+# Windows
+Thumbs.db
+desktop.ini
