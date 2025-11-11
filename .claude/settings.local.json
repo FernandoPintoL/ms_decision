@@ -3,7 +3,19 @@
     "allow": [
       "Bash(dir)",
       "Bash(docker-compose down:*)",
-      "Bash(docker-compose up:*)"
+      "Bash(docker-compose up:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker logs:*)",
+      "Bash(pip install:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(python -m venv:*)",
+      "Bash(\"D:\\SWII\\micro_servicios\\ms_decision\\.venv_new\\Scripts\\python\" -m pip install --upgrade pip)",
+      "Bash(\"D:\\SWII\\micro_servicios\\ms_decision\\.venv_new\\Scripts\\python\" -m pip install -r \"D:\\SWII\\micro_servicios\\ms_decision\\requirements.txt\")",
+      "Bash(docker image rm:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker-compose config:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

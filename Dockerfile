@@ -39,12 +39,14 @@ COPY . .
 # Crear directorios necesarios si no existen
 RUN mkdir -p modelos_ml archivos_csv datos/imagenes_entrenamiento
 
-# Exponer puerto GraphQL
-EXPOSE 8000
+# Exponer puerto (configurable via environment variable)
+ARG SERVER_PORT=8002
+ENV SERVER_PORT=${SERVER_PORT}
+EXPOSE ${SERVER_PORT}
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
+    CMD python -c "import requests; requests.get('http://localhost:${SERVER_PORT}/health')" || exit 1
 
 # Comando de inicio
-CMD ["uvicorn", "presentacion.servidor:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "presentacion.servidor:app", "--host", "0.0.0.0", "--port", "8002"]
